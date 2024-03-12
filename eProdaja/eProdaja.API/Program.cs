@@ -1,4 +1,7 @@
 using eProdaja.Services;
+using eProdaja.Services.Database;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +12,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //builder.Services.AddTransient<IProizvodiServices, ProizvodiService>();
-builder.Services.AddTransient<IProizvodiServices, DummyProizvodiService>();
+builder.Services.AddTransient<IProizvodiServices, ProizvodiService>();
+builder.Services.AddTransient<IKorisniciService, KorisniciService>();
+
+
+var connectionString = builder.Configuration.GetConnectionString("eProdajaConnection");
+builder.Services.AddDbContext<EProdajaContext>(options =>
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddMapster();
 
 var app = builder.Build();
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eProdaja.Services
 {
-    public class DummyProizvodiService:ProizvodiService
+    public class DummyProizvodiService:IProizvodiServices
     {
         public new List<Proizvodi> List = new List<Proizvodi>()
         {
@@ -19,7 +19,7 @@ namespace eProdaja.Services
             }
         };
 
-        public override List<Proizvodi> GetList()
+        public List<Proizvodi> GetList()
         {
             return List;
         }
