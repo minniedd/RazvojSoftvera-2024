@@ -1,4 +1,5 @@
 ﻿using eProdaja.Model;
+using eProdaja.Model.SearchObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace eProdaja.Services
 {
     public interface IProizvodiServices
     {
-        List<Proizvodi> GetList();
+        List<Proizvodi> GetList(ProizvodiSearchObject searchObject);
     }
 }

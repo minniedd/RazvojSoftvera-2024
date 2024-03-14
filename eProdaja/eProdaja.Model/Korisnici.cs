@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eProdaja.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +22,7 @@ namespace eProdaja.Model
         public string KorisnickoIme { get; set; } = null!;
 
         public bool? Status { get; set; }
+
+        public virtual ICollection<KorisniciUloge> KorisniciUloges { get; set; } = new List<KorisniciUloge>();
     }
 }

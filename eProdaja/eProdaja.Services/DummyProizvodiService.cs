@@ -1,4 +1,5 @@
 ﻿using eProdaja.Model;
+using eProdaja.Model.SearchObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace eProdaja.Services
             }
         };
 
-        public List<Proizvodi> GetList()
+        public List<Proizvodi> GetList(ProizvodiSearchObject searchObject)
         {
             return List;
         }

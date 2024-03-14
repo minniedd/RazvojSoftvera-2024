@@ -1,12 +1,17 @@
-﻿using eProdaja.Model.Requests;
+﻿using Azure.Core;
+using eProdaja.Model.Requests;
+using eProdaja.Model.SearchObjects;
 using eProdaja.Services.Database;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Dynamic;
+using System.Linq.Dynamic.Core;
 
 namespace eProdaja.Services
 {
@@ -21,13 +26,56 @@ namespace eProdaja.Services
             _mapper = mapper;
         }
 
-        public virtual List<Model.Korisnici> GetList()
+        public virtual PagedResult<Model.Korisnici> GetList(KorisniciSearchObject searchObject)
         {
             List<Model.Korisnici> result = new List<Model.Korisnici>();
 
-            var list = Context.Korisnicis.ToList();
+            var query = Context.Korisnicis.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchObject?.ImeGTE))
+            {
+                query = query.Where(x=>x.Ime.StartsWith(searchObject.ImeGTE));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchObject?.PrezimeGTE))
+            {
+                query = query.Where(x => x.Prezime.StartsWith(searchObject.PrezimeGTE));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchObject?.Email))
+            {
+                query = query.Where(x => x.Email == searchObject.Email);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchObject?.KorisnickoIme))
+            {
+                query = query.Where(x => x.KorisnickoIme == searchObject.KorisnickoIme);
+            }
+
+            if (searchObject?.IsKorisniciUlogeIncluded == true)
+            {
+                query = query.Include(x => x.KorisniciUloges).ThenInclude(x=>x.Uloga);
+            }
+
+            int count = query.Count();
+
+            if (!string.IsNullOrWhiteSpace(searchObject.OrderBy))
+            {
+                query = query.OrderBy(searchObject.OrderBy);
+            }
+
+            if (searchObject?.Page.HasValue == true && searchObject?.PageSize.HasValue == true)
+            {
+                query = query.Skip(searchObject.Page.Value * searchObject.PageSize.Value).Take(searchObject.PageSize.Value);
+            }
+            
+            var list = query.ToList();
 
             result = _mapper.Map(list, result);
+
+            PagedResult<Model.Korisnici> response = new PagedResult<Model.Korisnici>();
+            response.PageCount = count;
+
 
             return result;
         }
